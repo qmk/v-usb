@@ -35,7 +35,7 @@ the file appropriate for the given clock rate.
 #ifdef __IAR_SYSTEMS_ASM__
     extern  usbRxBuf, usbDeviceAddr, usbNewDeviceAddr, usbInputBufOffset
     extern  usbCurrentTok, usbRxLen, usbRxToken, usbTxLen
-    extern  usbTxBuf, usbTxStatus1, usbTxStatus3
+    extern  usbTxBuf, usbTxStatus1, usbTxStatus3, usbTxStatus4
 #   if USB_COUNT_SOF
         extern usbSofCount
 #   endif
@@ -82,6 +82,8 @@ the file appropriate for the given clock rate.
 #define usbTxBuf1   (usbTxStatus1 + 1)
 #define usbTxLen3   usbTxStatus3
 #define usbTxBuf3   (usbTxStatus3 + 1)
+#define usbTxLen4   usbTxStatus4
+#define usbTxBuf4   (usbTxStatus4 + 1)
 
 
 ;----------------------------------------------------------------------------
@@ -117,7 +119,7 @@ RTMODEL "__rt_version", "3"
 #   define polyH    r21
 #   define scratch  r23
 
-#else  /* __IAR_SYSTEMS_ASM__ */ 
+#else  /* __IAR_SYSTEMS_ASM__ */
 /* Register assignments for usbCrc16 on gcc */
 /* Calling conventions on gcc:
  * First parameter passed in r24/r25, second in r22/23 and so on.
@@ -151,7 +153,7 @@ RTMODEL "__rt_version", "3"
 ; unsigned table(unsigned char x)
 ; {
 ; unsigned    value;
-; 
+;
 ;     value = (unsigned)x << 6;
 ;     value ^= (unsigned)x << 7;
 ;     if(parity(x))
@@ -161,7 +163,7 @@ RTMODEL "__rt_version", "3"
 ; unsigned usbCrc16(unsigned char *argPtr, unsigned char argLen)
 ; {
 ; unsigned crc = 0xffff;
-; 
+;
 ;     while(argLen--)
 ;         crc = table(lo8(crc) ^ *argPtr++) ^ hi8(crc);
 ;     return ~crc;
@@ -293,7 +295,7 @@ usbCrc16Append:
 #   define cnt16H   r31
 #   define cntH     r18
 
-#else  /* __IAR_SYSTEMS_ASM__ */ 
+#else  /* __IAR_SYSTEMS_ASM__ */
 /* Register assignments for usbMeasureFrameLength on gcc */
 /* Calling conventions on gcc:
  * First parameter passed in r24/r25, second in r22/23 and so on.

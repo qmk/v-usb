@@ -110,11 +110,17 @@ handleData:
     breq    doReturn            ;[21]
     lds     x2, usbRxLen        ;[22]
     tst     x2                  ;[24]
-    brne    sendNakAndReti      ;[25]
+; 2020-05-04 Following change is used to overcome branch +/- 64 word limit.
+    breq    noBranchSendNakAndReti ; [25]
+    rjmp    sendNakAndReti
+noBranchSendNakAndReti:
 ; 2006-03-11: The following two lines fix a problem where the device was not
 ; recognized if usbPoll() was called less frequently than once every 4 ms.
     cpi     cnt, 4              ;[26] zero sized data packets are status phase only -- ignore and ack
-    brmi    sendAckAndReti      ;[27] keep rx buffer clean -- we must not NAK next SETUP
+; 2020-05-04 Following change is used to overcome branch +/- 64 word limit.
+    brpl    noBranchSendAckAndReti ;[27] keep rx buffer clean -- we must not NAK next SETUP
+    rjmp    sendAckAndReti
+noBranchSendAckAndReti:
 #if USB_CFG_CHECK_DATA_TOGGLING
     sts     usbCurrentDataToken, token  ; store for checking by C code
 #endif
@@ -166,6 +172,10 @@ handleIn1:                      ;[38]
     cpi     x3, USB_CFG_EP3_NUMBER;[38]
     breq    handleIn3           ;[39]
 #endif
+#if USB_CFG_HAVE_INTRIN_ENDPOINT4
+    cpi     x3, USB_CFG_EP4_NUMBER;[38]
+    breq    handleIn4           ;[39]
+#endif
     lds     cnt, usbTxLen1      ;[40]
     sbrc    cnt, 4              ;[42] all handshake tokens have bit 4 set
     rjmp    sendCntAndReti      ;[43] 47 + 16 = 63 until SOP
@@ -184,4 +194,16 @@ handleIn3:
     ldi     YH, hi8(usbTxBuf3)  ;[48]
     rjmp    usbSendAndReti      ;[49] 51 + 12 = 63 until SOP
 #endif
+
+#if USB_CFG_HAVE_INTRIN_ENDPOINT4
+handleIn4:
+    lds     cnt, usbTxLen4      ;[41]
+    sbrc    cnt, 4              ;[43]
+    rjmp    sendCntAndReti      ;[44] 49 + 16 = 65 until SOP
+    sts     usbTxLen4, x1       ;[45] x1 == USBPID_NAK from above
+    ldi     YL, lo8(usbTxBuf4)  ;[47]
+    ldi     YH, hi8(usbTxBuf4)  ;[48]
+    rjmp    usbSendAndReti      ;[49] 51 + 12 = 63 until SOP
+#endif
+
 #endif
