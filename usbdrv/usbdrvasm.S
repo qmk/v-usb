@@ -295,7 +295,7 @@ usbCrc16Append:
 #   define cnt16H   r31
 #   define cntH     r18
 
-#else  /* __IAR_SYSTEMS_ASM__ */
+#else  /* __IAR_SYSTEMS_ASM__ */ 
 /* Register assignments for usbMeasureFrameLength on gcc */
 /* Calling conventions on gcc:
  * First parameter passed in r24/r25, second in r22/23 and so on.
