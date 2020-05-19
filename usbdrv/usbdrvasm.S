@@ -153,7 +153,7 @@ RTMODEL "__rt_version", "3"
 ; unsigned table(unsigned char x)
 ; {
 ; unsigned    value;
-;
+; 
 ;     value = (unsigned)x << 6;
 ;     value ^= (unsigned)x << 7;
 ;     if(parity(x))
