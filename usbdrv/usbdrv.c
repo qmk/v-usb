@@ -193,7 +193,7 @@ PROGMEM const char usbDescriptorConfiguration[] = {    /* USB configuration desc
 #if USB_CFG_HAVE_INTRIN_ENDPOINT4   /* endpoint descriptor for endpoint 4 */
     7,          /* sizeof(usbDescrEndpoint) */
     USBDESCR_ENDPOINT,  /* descriptor type = endpoint */
-    (char)(0x80 | USB_CFG_EP4_NUMBER), /* IN endpoint number 3 */
+    (char)(0x80 | USB_CFG_EP4_NUMBER), /* IN endpoint number 4 */
     0x03,       /* attrib: Interrupt endpoint */
     8, 0,       /* maximum packet size */
     USB_CFG_INTR_POLL_INTERVAL, /* in ms */
