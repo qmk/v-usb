@@ -142,7 +142,7 @@ PROGMEM const char usbDescriptorDevice[] = {    /* USB device descriptor */
 PROGMEM const char usbDescriptorConfiguration[] = {    /* USB configuration descriptor */
     9,          /* sizeof(usbDescriptorConfiguration): length of descriptor in bytes */
     USBDESCR_CONFIG,    /* descriptor type */
-    18 + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT3 +
+    18 + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT3 + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT4 +
          7 * USB_CFG_HAVE_INTRIN_ENDPOINT4 +(USB_CFG_DESCR_PROPS_HID & 0xff), 0,
                 /* total length of data returned (including inlined descriptors) */
     1,          /* number of interfaces in this configuration */
