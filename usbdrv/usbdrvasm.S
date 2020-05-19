@@ -163,7 +163,7 @@ RTMODEL "__rt_version", "3"
 ; unsigned usbCrc16(unsigned char *argPtr, unsigned char argLen)
 ; {
 ; unsigned crc = 0xffff;
-;
+; 
 ;     while(argLen--)
 ;         crc = table(lo8(crc) ^ *argPtr++) ^ hi8(crc);
 ;     return ~crc;
