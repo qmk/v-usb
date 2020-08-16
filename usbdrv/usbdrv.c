@@ -37,6 +37,9 @@ usbTxStatus_t  usbTxStatus1;
 #   if USB_CFG_HAVE_INTRIN_ENDPOINT3
 usbTxStatus_t  usbTxStatus3;
 #   endif
+#   if USB_CFG_HAVE_INTRIN_ENDPOINT4
+usbTxStatus_t  usbTxStatus4;
+#   endif
 #endif
 #if USB_CFG_CHECK_DATA_TOGGLING
 uchar       usbCurrentDataToken;/* when we check data toggling to ignore duplicate packets */
@@ -139,7 +142,7 @@ PROGMEM const char usbDescriptorDevice[] = {    /* USB device descriptor */
 PROGMEM const char usbDescriptorConfiguration[] = {    /* USB configuration descriptor */
     9,          /* sizeof(usbDescriptorConfiguration): length of descriptor in bytes */
     USBDESCR_CONFIG,    /* descriptor type */
-    18 + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT3 +
+    18 + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT3 + 7 * USB_CFG_HAVE_INTRIN_ENDPOINT4 +
                 (USB_CFG_DESCR_PROPS_HID & 0xff), 0,
                 /* total length of data returned (including inlined descriptors) */
     1,          /* number of interfaces in this configuration */
@@ -187,6 +190,14 @@ PROGMEM const char usbDescriptorConfiguration[] = {    /* USB configuration desc
     8, 0,       /* maximum packet size */
     USB_CFG_INTR_POLL_INTERVAL, /* in ms */
 #endif
+#if USB_CFG_HAVE_INTRIN_ENDPOINT4   /* endpoint descriptor for endpoint 4 */
+    7,          /* sizeof(usbDescrEndpoint) */
+    USBDESCR_ENDPOINT,  /* descriptor type = endpoint */
+    (char)(0x80 | USB_CFG_EP4_NUMBER), /* IN endpoint number 4 */
+    0x03,       /* attrib: Interrupt endpoint */
+    8, 0,       /* maximum packet size */
+    USB_CFG_INTR_POLL_INTERVAL, /* in ms */
+#endif
 };
 #endif
 
@@ -199,6 +210,9 @@ static inline void  usbResetDataToggling(void)
 #   if USB_CFG_HAVE_INTRIN_ENDPOINT3
     USB_SET_DATATOKEN3(USB_INITIAL_DATATOKEN);  /* reset data toggling for interrupt endpoint */
 #   endif
+#   if USB_CFG_HAVE_INTRIN_ENDPOINT4
+    USB_SET_DATATOKEN4(USB_INITIAL_DATATOKEN);  /* reset data toggling for interrupt endpoint */
+#   endif
 #endif
 }
 
@@ -208,6 +222,9 @@ static inline void  usbResetStall(void)
         usbTxLen1 = USBPID_NAK;
 #if USB_CFG_HAVE_INTRIN_ENDPOINT3
         usbTxLen3 = USBPID_NAK;
+#endif
+#if USB_CFG_HAVE_INTRIN_ENDPOINT4
+        usbTxLen4 = USBPID_NAK;
 #endif
 #endif
 }
@@ -250,6 +267,13 @@ USB_PUBLIC void usbSetInterrupt(uchar *data, uchar len)
 USB_PUBLIC void usbSetInterrupt3(uchar *data, uchar len)
 {
     usbGenericSetInterrupt(data, len, &usbTxStatus3);
+}
+#endif
+
+#if USB_CFG_HAVE_INTRIN_ENDPOINT4
+USB_PUBLIC void usbSetInterrupt4(uchar *data, uchar len)
+{
+    usbGenericSetInterrupt(data, len, &usbTxStatus4);
 }
 #endif
 #endif /* USB_CFG_SUPPRESS_INTR_CODE */
@@ -627,6 +651,9 @@ USB_PUBLIC void usbInit(void)
     usbTxLen1 = USBPID_NAK;
 #if USB_CFG_HAVE_INTRIN_ENDPOINT3
     usbTxLen3 = USBPID_NAK;
+#endif
+#if USB_CFG_HAVE_INTRIN_ENDPOINT4
+    usbTxLen4 = USBPID_NAK;
 #endif
 #endif
 }

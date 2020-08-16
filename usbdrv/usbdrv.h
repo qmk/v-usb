@@ -268,6 +268,11 @@ USB_PUBLIC void usbSetInterrupt3(uchar *data, uchar len);
 #define usbInterruptIsReady3()   (usbTxLen3 & 0x10)
 /* Same as above for endpoint 3 */
 #endif
+#if USB_CFG_HAVE_INTRIN_ENDPOINT4
+USB_PUBLIC void usbSetInterrupt4(uchar *data, uchar len);
+#define usbInterruptIsReady4()   (usbTxLen4 & 0x10)
+/* Same as above for endpoint 4 */
+#endif
 #endif /* USB_CFG_HAVE_INTRIN_ENDPOINT */
 #if USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH    /* simplified interface for backward compatibility */
 #define usbHidReportDescriptor  usbDescriptorHidReport
@@ -408,8 +413,9 @@ extern volatile schar   usbRxLen;
 
 #define USB_SET_DATATOKEN1(token)   usbTxBuf1[0] = token
 #define USB_SET_DATATOKEN3(token)   usbTxBuf3[0] = token
+#define USB_SET_DATATOKEN4(token)   usbTxBuf4[0] = token
 /* These two macros can be used by application software to reset data toggling
- * for interrupt-in endpoints 1 and 3. Since the token is toggled BEFORE
+ * for interrupt-in endpoints 1, 3 and 4. Since the token is toggled BEFORE
  * sending data, you must set the opposite value of the token which should come
  * first.
  */
@@ -592,8 +598,16 @@ int usbDescriptorStringSerialNumber[];
 #define USB_CFG_EP3_NUMBER  3
 #endif
 
+#ifndef USB_CFG_EP4_NUMBER  /* if not defined in usbconfig.h */
+#define USB_CFG_EP4_NUMBER  4
+#endif
+
 #ifndef USB_CFG_HAVE_INTRIN_ENDPOINT3
 #define USB_CFG_HAVE_INTRIN_ENDPOINT3   0
+#endif
+
+#ifndef USB_CFG_HAVE_INTRIN_ENDPOINT4
+#define USB_CFG_HAVE_INTRIN_ENDPOINT4   0
 #endif
 
 #define USB_BUFSIZE     11  /* PID, 8 bytes data, 2 bytes CRC */
@@ -683,11 +697,13 @@ typedef struct usbTxStatus{
     uchar   buffer[USB_BUFSIZE];
 }usbTxStatus_t;
 
-extern usbTxStatus_t   usbTxStatus1, usbTxStatus3;
+extern usbTxStatus_t   usbTxStatus1, usbTxStatus3, usbTxStatus4;
 #define usbTxLen1   usbTxStatus1.len
 #define usbTxBuf1   usbTxStatus1.buffer
 #define usbTxLen3   usbTxStatus3.len
 #define usbTxBuf3   usbTxStatus3.buffer
+#define usbTxLen4   usbTxStatus4.len
+#define usbTxBuf4   usbTxStatus4.buffer
 
 
 typedef union usbWord{
